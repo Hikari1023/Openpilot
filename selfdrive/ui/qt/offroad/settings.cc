@@ -71,7 +71,12 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "In this mode openpilot will ignore lanelines and just drive how it thinks a human would.",
       "../assets/offroad/icon_road.png",
     },
-#ifdef ENABLE_MAPS
+    {
+      "TurnVisionControl",
+      "Enable vision based turn control",
+      "Use vision path predictions to estimate the appropiate speed to drive through turns ahead.",
+      "../assets/offroad/icon_road.png",
+    },
     {
       "NavSettingTime24h",
       "Show ETA in 24h format",
