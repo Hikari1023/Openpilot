@@ -99,17 +99,17 @@ class opParams:
 
     self.fork_params = {
       'camera_offset': Param(-0.04 if TICI else 0.06, NUMBER, 'Your camera offset to use in lane_planner.py\n', live=True),
-      'global_df_mod': Param(1.0, NUMBER, 'The multiplier for the current distance used by dynamic follow. The range is limited from 0.85 to 2.5\n'
+      'global_df_mod': Param(0.85, NUMBER, 'The multiplier for the current distance used by dynamic follow. The range is limited from 0.85 to 2.5\n'
                                           'Smaller values will get you closer, larger will get you farther\n'
                                           'This is multiplied by any profile that\'s active. Set to 1. to disable', live=True),
-      'min_TR': Param(0.9, NUMBER, 'The minimum allowed following distance in seconds. Default is 0.9 seconds\n'
+      'min_TR': Param(0.85, NUMBER, 'The minimum allowed following distance in seconds. Default is 0.9 seconds\n'
                                    'The range is limited from 0.85 to 2.7', live=True),
       'alca_no_nudge_speed': Param(90., NUMBER, 'Above this speed (mph), lane changes initiate IMMEDIATELY. Behavior is stock under'),
       'steer_ratio': Param(None, NONE_OR_NUMBER, '(Can be: None, or a float) If you enter None, openpilot will use the learned sR.\n'
                                                  'If you use a float/int, openpilot will use that steer ratio instead', live=True),
-      'upload_onroad': Param(True, bool, 'By default, openpilot uploads small qlogs while driving. Set to False to wait until we go offroad', static=True),
+      'upload_onroad': Param(False, bool, 'By default, openpilot uploads small qlogs while driving. Set to False to wait until we go offroad', static=True),
       'disengage_on_gas': Param(False, bool, 'Whether you want openpilot to disengage on gas input or not'),
-      'update_behavior': Param('alert', str, 'Can be: (\'off\', \'alert\', \'auto\') without quotes\n'
+      'update_behavior': Param('off', str, 'Can be: (\'off\', \'alert\', \'auto\') without quotes\n'
                                              'off will never update, alert shows an alert on-screen\n'
                                              'auto will reboot the device when an update is seen', static=True),
       'dynamic_gas': Param(False, bool, 'Whether to use dynamic gas if your car is supported'),
@@ -120,7 +120,7 @@ class opParams:
       # 'dynamic_camera_offset': Param(False, bool, 'Whether to automatically keep away from oncoming traffic.\n'
       #                                             'Works from 35 to ~60 mph (requires radar)'),
       # 'dynamic_camera_offset_time': Param(3.5, NUMBER, 'How long to keep away from oncoming traffic in seconds after losing lead'),
-      'disable_charging': Param(30, NUMBER, 'How many hours until charging is disabled while idle', static=True),
+      'disable_charging': Param(0.1, NUMBER, 'How many hours until charging is disabled while idle', static=True),
       'hide_model_long': Param(False, bool, 'Enable this to hide the Model Long button on the screen', static=True),
       'prius_use_pid': Param(False, bool, 'This enables the PID lateral controller with new a experimental derivative tune\n'
                                           'False: stock INDI, True: TSS2-tuned PID', static=True),
@@ -131,7 +131,7 @@ class opParams:
       'corollaTSS2_use_indi': Param(False, bool, 'Enable this to use INDI for lat with your TSS2 Corolla', static=True),
       'rav4TSS2_use_indi': Param(False, bool, 'Enable this to use INDI for lat with your TSS2 RAV4', static=True),
       'standstill_hack': Param(False, bool, 'Some cars support stop and go, you just need to enable this', static=True),
-      'toyota_distance_btn': Param(False, bool, 'Set to True to use the steering wheel distance button to control the dynamic follow profile.\n'
+      'toyota_distance_btn': Param(True, bool, 'Set to True to use the steering wheel distance button to control the dynamic follow profile.\n'
                                                 'Works on TSS2 vehicles and on TSS1 vehicles with an sDSU with a Sep. 2020 firmware or newer.', static=True),
 
       'dynamic_follow': Param('stock', str, static=True, hidden=True),

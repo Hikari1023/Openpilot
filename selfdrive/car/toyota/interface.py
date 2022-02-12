@@ -255,6 +255,15 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 4305. * CV.LB_TO_KG + STD_CARGO_KG
       set_lat_tune(ret.lateralTuning, lat_params, LatTunes.PID_J)
 
+    elif candidate == CAR.PRIUS_V:
+      ret.safetyConfigs[0].safetyParam = 118
+      stop_and_go = True
+      ret.wheelbase = 2.78
+      ret.steerRatio = 18.1
+      tire_stiffness_factor = 0.5533
+      ret.mass = 4387. * CV.LB_TO_KG + STD_CARGO_KG
+      set_lat_tune(ret.lateralTuning, lat_params, LatTunes.LQR_PV)
+
     ret.centerToFront = ret.wheelbase * 0.44
 
     # TODO: get actual value, for now starting with reasonable value for

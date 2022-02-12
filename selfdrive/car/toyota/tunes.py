@@ -27,6 +27,7 @@ class LatTunes(Enum):
   PID_N = 15
   STEER_MODEL_COROLLA = 16
   STEER_MODEL_CAMRY = 17
+  LQR_PV = 18
 
 
 ###### LONG ######
@@ -100,6 +101,17 @@ def set_lat_tune(tune, params, name):
     tune.lqr.k = [-110.73572306, 451.22718255]
     tune.lqr.l = [0.3233671, 0.3185757]
     tune.lqr.dcGain = 0.002237852961363602
+
+  elif name == LatTunes.LQR_PV:
+    tune.init('lqr')
+    tune.lqr.scale = 1650.0
+    tune.lqr.ki = 0.028
+    tune.lqr.a = [0., 1., -0.22619643, 1.21822268]
+    tune.lqr.b = [-1.92006585e-04, 3.95603032e-05]
+    tune.lqr.c = [1., 0.]
+    tune.lqr.k = [-110.73572306, 451.22718255]
+    tune.lqr.l = [0.3233671, 0.3185757]
+    tune.lqr.dcGain = 0.0028
 
   elif 'STEER_MODEL' in str(name):
     tune.init('model')
