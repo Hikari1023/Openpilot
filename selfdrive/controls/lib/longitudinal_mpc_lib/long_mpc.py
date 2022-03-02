@@ -272,7 +272,7 @@ class LongitudinalMpc:
                                    J_EGO_COST * cost_mulitpliers[1]]))
     for i in range(N):
       # reduce the cost on (a-a_prev) later in the horizon.
-      W[4,4] = a_change_cost * cost_mulitpliers[0] * np.interp(T_IDXS[i], [0.0, 1.0, 2.0], [1.0, 1.0, 0.0])
+      W[4,4] = a_change_cost * cost_mulitpliers[0] * np.interp(T_IDXS[i], [0.0, 0.5, 2.0], [1.0, 1.0, 0.0])
       self.solver.cost_set(i, 'W', W)
     # Setting the slice without the copy make the array not contiguous,
     # causing issues with the C interface.
