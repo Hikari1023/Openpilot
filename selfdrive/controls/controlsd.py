@@ -71,6 +71,7 @@ class Controls:
 
     params = Params()
     self.joystick_mode = params.get_bool("JoystickDebugMode")
+    self.disengage_on_gas = False
     joystick_packet = ['testJoystick'] if self.joystick_mode else []
 
     self.sm = sm
@@ -94,7 +95,7 @@ class Controls:
     get_one_can(self.can_sock)
 
     self.CI, self.CP = get_car(self.can_sock, self.pm.sock['sendcan'])
-    self.CP.unsafeMode = 0  # see panda/board/safety_declarations.h for allowed values
+    self.CP.unsafeMode = 1  # see panda/board/safety_declarations.h for allowed values
 
     # read params
     self.is_metric = params.get_bool("IsMetric")
@@ -195,7 +196,7 @@ class Controls:
       return
 
     # Disable on rising edge of gas or brake. Also disable on brake when speed > 0
-    if (CS.gasPressed and not self.CS_prev.gasPressed) or \
+    if (self.disengage_on_gas and CS.gasPressed and not self.CS_prev.gasPressed) or \
       (CS.brakePressed and (not self.CS_prev.brakePressed or not CS.standstill)):
       self.events.add(EventName.pedalPressed)
 

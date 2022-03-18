@@ -102,13 +102,13 @@ class CarController:
       # handle permit braking logic
       # record accelerator depression frame
       if CS.out.gasPressed:
-        self.last_gas_press_frame = frame
+        self.last_gas_press_frame = self.frame
       # record last frame when vego is 0
       if CS.pcm_acc_status == 7:
-        self.last_standstill_frame = frame
+        self.last_standstill_frame = self.frame
       # record disengaged frame
-      if not c.enabled:
-        self.last_off_frame = frame
+      if not CC.enabled:
+        self.last_off_frame = self.frame
       # accelerator depression logic - note by cydia2020
       # openpilot should not apply any brakes when the accelerator is depressed
       # this allows the car's pcm to smoothly apply the brakes by first requesting < 0 acceleration
@@ -122,7 +122,7 @@ class CarController:
       # stop and go performance. This hack mitigates that by setting permit braking to 0 for
       # 2 seconds after the car goes out of standstill, the actuator condition prevents the car
       # from coasting forward if the driver accidently touches the resume button
-      if (CS.out.gasPressed or 1. / DT_CTRL > (frame - self.last_gas_press_frame)) or (1. / DT_CTRL > (frame - self.last_off_frame)) or (2. / DT_CTRL > (frame - self.last_standstill_frame)):
+      if (CS.out.gasPressed or 1. / DT_CTRL > (self.frame - self.last_gas_press_frame)) or (1. / DT_CTRL > (self.frame - self.last_off_frame)) or (2. / DT_CTRL > (self.frame - self.last_standstill_frame)):
         self.permit_braking = False
       else:
         self.permit_braking = True
