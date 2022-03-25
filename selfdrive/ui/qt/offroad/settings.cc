@@ -77,6 +77,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "Use vision path predictions to estimate the appropiate speed to drive through turns ahead.",
       "../assets/offroad/icon_road.png",
     },
+#ifdef ENABLE_MAPS
     {
       "NavSettingTime24h",
       "Show ETA in 24h format",
