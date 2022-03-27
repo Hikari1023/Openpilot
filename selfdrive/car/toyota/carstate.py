@@ -1,4 +1,3 @@
-import cereal.messaging as messaging
 from cereal import car
 from common.conversions import Conversions as CV
 from common.numpy_fast import mean

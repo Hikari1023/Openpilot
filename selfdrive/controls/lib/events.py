@@ -1,4 +1,3 @@
-import os
 from enum import IntEnum
 from typing import Dict, Union, Callable, List, Optional
 
@@ -7,7 +6,6 @@ import cereal.messaging as messaging
 from common.conversions import Conversions as CV
 from common.realtime import DT_CTRL
 from selfdrive.locationd.calibrationd import MIN_SPEED_FILTER
-from selfdrive.version import get_short_branch
 
 AlertSize = log.ControlsState.AlertSize
 AlertStatus = log.ControlsState.AlertStatus
