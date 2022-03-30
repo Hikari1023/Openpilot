@@ -40,6 +40,9 @@ def manager_init() -> None:
     ("CompletedTrainingVersion", "0"),
     ("HasAcceptedTerms", "0"),
     ("OpenpilotEnabledToggle", "1"),
+    ("IsLdwEnabled", "1"),
+    ("EndToEndToggle", "1"),
+    ("IsLdwEnabled", "1"),
     ("TurnVisionControl", "1"),
   ]
   if not PC:
