@@ -41,8 +41,8 @@ def manager_init() -> None:
     ("HasAcceptedTerms", "0"),
     ("OpenpilotEnabledToggle", "1"),
     ("IsLdwEnabled", "1"),
+    ("IsMetric", "1"),
     ("EndToEndToggle", "1"),
-    ("IsLdwEnabled", "1"),
     ("TurnVisionControl", "1"),
   ]
   if not PC:
