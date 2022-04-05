@@ -27,7 +27,6 @@ class CarInterfaceBase(ABC):
   def __init__(self, CP, CarController, CarState):
     self.CP = CP
     self.VM = VehicleModel(CP)
-    self.disengage_on_gas = False
 
     self.frame = 0
     self.steering_unpressed = 0

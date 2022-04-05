@@ -74,7 +74,6 @@ class Controls:
 
     params = Params()
     self.joystick_mode = params.get_bool("JoystickDebugMode")
-    self.disengage_on_gas = False
     joystick_packet = ['testJoystick'] if self.joystick_mode else []
 
     self.sm = sm
