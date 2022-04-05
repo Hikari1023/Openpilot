@@ -76,6 +76,10 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "Enable vision based turn control",
       "Use vision path predictions to estimate the appropiate speed to drive through turns ahead.",
       "../assets/offroad/icon_road.png",
+      "DisengageOnAccelerator",
+      "Disengage On Accelerator Pedal",
+      "When enabled, openpilot will disengage when the accelerator pedal is pressed.",
+      "../assets/offroad/icon_disengage_on_accelerator.svg",
     },
 #ifdef ENABLE_MAPS
     {
