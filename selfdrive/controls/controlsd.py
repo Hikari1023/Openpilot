@@ -479,7 +479,11 @@ class Controls:
 
         # OVERRIDING
         elif self.state == State.overriding:
-          if not self.events.any(ET.OVERRIDE):
+          if self.events.any(ET.SOFT_DISABLE):
+            self.state = State.softDisabling
+            self.soft_disable_timer = int(SOFT_DISABLE_TIME / DT_CTRL)
+            self.current_alert_types.append(ET.SOFT_DISABLE)
+          elif not self.events.any(ET.OVERRIDE):
             self.state = State.enabled
           else:
             self.current_alert_types.append(ET.OVERRIDE)
@@ -759,9 +763,11 @@ class Controls:
 
     # Sample data from sockets and get a carState
     CS = self.data_sample()
+    cloudlog.timestamp("Data sampled")
     self.prof.checkpoint("Sample")
 
     self.update_events(CS)
+    cloudlog.timestamp("Events updated")
 
     if not self.read_only and self.initialized:
       # Update control state
