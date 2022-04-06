@@ -9,6 +9,7 @@ from selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR,
                                         MIN_ACC_SPEED, PEDAL_TRANSITION, CarControllerParams
 from selfdrive.car.toyota.interface import CarInterface
 from opendbc.can.packer import CANPacker
+
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 
