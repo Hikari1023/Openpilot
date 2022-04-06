@@ -22,10 +22,7 @@ class CarController:
     self.standstill_req = False
     self.steer_rate_limited = False
     self.permit_braking = True
-    self.last_gas_press_frame = 0
-    self.last_standstill_frame = 0
     self.last_off_frame = 0
-    self.CP = CP
 
     self.packer = CANPacker(dbc_name)
     self.gas = 0
@@ -102,29 +99,10 @@ class CarController:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
 
       # handle permit braking logic
-      # record accelerator depression frame
-      if CS.out.gasPressed:
-        self.last_gas_press_frame = self.frame
-      # record last frame when vego is 0
-      if CS.pcm_acc_status == 7:
-        self.last_standstill_frame = self.frame
       # record disengaged frame
       if not CC.enabled:
         self.last_off_frame = self.frame
-      # accelerator depression logic - note by cydia2020
-      # openpilot should not apply any brakes when the accelerator is depressed
-      # this allows the car's pcm to smoothly apply the brakes by first requesting < 0 acceleration
-      # creating a coasting then braking effect
-      #
-      # standstill logic - note by cydia2020
-      # Setting permit braking to 1 will adversely affect openpilot's stop and go performance
-      # this is due to openpilot's long mpc briefly requesting a very small acceleration on
-      # startup for some unknown reasons, if permit braking is set to 1, the car will think that
-      # openpilot wants to stop, thus applying the brakes, annoying the rear car, and decreasing
-      # stop and go performance. This hack mitigates that by setting permit braking to 0 for
-      # 2 seconds after the car goes out of standstill, the actuator condition prevents the car
-      # from coasting forward if the driver accidently touches the resume button
-      if (CS.out.gasPressed or 1. / DT_CTRL > (self.frame - self.last_gas_press_frame)) or (1. / DT_CTRL > (self.frame - self.last_off_frame)) or (2. / DT_CTRL > (self.frame - self.last_standstill_frame)):
+      if 1. / DT_CTRL > self.frame - self.last_off_frame:
         self.permit_braking = False
       else:
         self.permit_braking = True
