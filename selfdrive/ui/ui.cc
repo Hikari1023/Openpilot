@@ -297,7 +297,7 @@ void Device::updateBrightness(const UIState &s) {
   }
 
   int brightness = brightness_filter.update(clipped_brightness);
-  if (!awake) {
+  if (!(s.status == STATUS_WARNING || s.status == STATUS_ALERT || interactive_timeout > 0)) {
     brightness = 0;
   }
 
@@ -329,6 +329,7 @@ void Device::updateWakefulness(const UIState &s) {
   if (ignition_just_turned_off || motionTriggered(s)) {
     resetInteractiveTimout();
   } else if (interactive_timeout > 0 && --interactive_timeout == 0) {
+    Hardware::set_brightness(0);
     emit interactiveTimout();
   }
 
