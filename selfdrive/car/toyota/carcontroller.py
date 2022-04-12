@@ -23,6 +23,9 @@ class CarController:
     self.steer_rate_limited = False
     self.permit_braking = True
     self.last_off_frame = 0
+    self.last_accelerator_frame = 0
+    self.last_standstill_frame = 0
+    self.rate_limit_counter = 0
 
     self.packer = CANPacker(dbc_name)
     self.gas = 0
@@ -102,7 +105,17 @@ class CarController:
       # record disengaged frame
       if not CC.enabled:
         self.last_off_frame = self.frame
-      if 1. / DT_CTRL > self.frame - self.last_off_frame:
+      if CS.pcm_acc_status == 7:
+        self.last_standstill_frame = self.frame
+      if CS.out.gasPressed:
+        self.last_accelerator_frame = self.frame
+
+      # do not brake when 1) when openpilot is just engaged
+      # 2) when accelerator was just pressed
+      # 3) when the vehicle just came out of standstill
+      if (0.5 / DT_CTRL > self.frame - self.last_off_frame) or \
+        (0.5 / DT_CTRL > self.frame - self.last_accelerator_frame) or CS.out.gasPressed or \
+        (0.85 / DT_CTRL > self.frame - self.last_standstill_frame) or not CC.enabled:
         self.permit_braking = False
       else:
         self.permit_braking = True
