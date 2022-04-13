@@ -258,11 +258,7 @@ class CarInterface(CarInterfaceBase):
     return ret
 
   # returns a car.CarState
-  def update(self, c, can_strings):
-    # ******************* do can recv *******************
-    self.cp.update_strings(can_strings)
-    self.cp_cam.update_strings(can_strings)
-
+  def _update(self, c):
     ret = self.CS.update(self.cp, self.cp_cam)
 
     # low speed re-write (dp)
@@ -278,7 +274,6 @@ class CarInterface(CarInterfaceBase):
     else:
       self.low_cruise_speed = 0.
 
-    ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
 
     # events
@@ -297,8 +292,7 @@ class CarInterface(CarInterfaceBase):
 
     ret.events = events.to_msg()
 
-    self.CS.out = ret.as_reader()
-    return self.CS.out
+    return ret
 
   # pass in a car.CarControl
   # to be called @ 100hz
