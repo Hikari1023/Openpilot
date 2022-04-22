@@ -22,10 +22,6 @@ class CarController:
     self.alert_active = False
     self.standstill_req = False
     self.steer_rate_limited = False
-    self.permit_braking = True
-    self.last_off_frame = 0
-    self.last_accelerator_frame = 0
-    self.last_standstill_frame = 0
     self.rate_limit_counter = 0
 
     self.packer = CANPacker(dbc_name)
@@ -102,33 +98,14 @@ class CarController:
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
 
-      # handle permit braking logic
-      # record disengaged frame
-      if not CC.enabled:
-        self.last_off_frame = self.frame
-      if CS.pcm_acc_status == 7:
-        self.last_standstill_frame = self.frame
-      if CS.out.gasPressed:
-        self.last_accelerator_frame = self.frame
-
-      # do not brake when 1) when openpilot is just engaged
-      # 2) when accelerator was just pressed
-      # 3) when the vehicle just came out of standstill
-      if (0.5 / DT_CTRL > self.frame - self.last_off_frame) or \
-        (0.5 / DT_CTRL > self.frame - self.last_accelerator_frame) or CS.out.gasPressed or \
-        (0.85 / DT_CTRL > self.frame - self.last_standstill_frame) or not CC.enabled:
-        self.permit_braking = False
-      else:
-        self.permit_braking = True
-
       # Lexus IS uses a different cancellation message
       if pcm_cancel_cmd and self.CP.carFingerprint in (CAR.LEXUS_IS, CAR.LEXUS_RC):
         can_sends.append(create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
-        can_sends.append(create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, CS.distance_btn, self.permit_braking))
+        can_sends.append(create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, CS.distance_btn, CC.enabled))
         self.accel = pcm_accel_cmd
       else:
-        can_sends.append(create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, CS.distance_btn, True))
+        can_sends.append(create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, CS.distance_btn, False))
 
     if self.frame % 2 == 0 and self.CP.enableGasInterceptor and self.CP.openpilotLongitudinalControl:
       # send exactly zero if gas cmd is zero. Interceptor will send the max between read value and gas cmd.
