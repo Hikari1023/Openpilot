@@ -59,7 +59,7 @@ MapPanel::MapPanel(QWidget* parent) : QWidget(parent) {
     current_widget = new QWidget(this);
     QVBoxLayout *current_layout = new QVBoxLayout(current_widget);
 
-    QLabel *title = new QLabel("Current Destination");
+    QLabel *title = new QLabel("當前目的地");
     title->setStyleSheet("font-size: 55px");
     current_layout->addWidget(title);
 
@@ -78,7 +78,7 @@ MapPanel::MapPanel(QWidget* parent) : QWidget(parent) {
   main_layout->addWidget(current_widget);
 
   // Recents
-  QLabel *recents_title = new QLabel("Recent Destinations");
+  QLabel *recents_title = new QLabel("近期的目的地");
   recents_title->setStyleSheet("font-size: 55px");
   main_layout->addWidget(recents_title);
   main_layout->addSpacing(20);
@@ -92,7 +92,7 @@ MapPanel::MapPanel(QWidget* parent) : QWidget(parent) {
   QWidget * no_prime_widget = new QWidget;
   {
     QVBoxLayout *no_prime_layout = new QVBoxLayout(no_prime_widget);
-    QLabel *signup_header = new QLabel("Try the Navigation Beta");
+    QLabel *signup_header = new QLabel("試用導航測試版");
     signup_header->setStyleSheet(R"(font-size: 75px; color: white; font-weight:600;)");
     signup_header->setAlignment(Qt::AlignCenter);
 
@@ -279,7 +279,7 @@ void MapPanel::parseResponse(const QString &response, bool success) {
   }
 
   if (!has_recents) {
-    QLabel *no_recents = new QLabel("no recent destinations");
+    QLabel *no_recents = new QLabel("沒有近期的目的地");
     no_recents->setStyleSheet(R"(font-size: 50px; color: #9c9c9c)");
     recent_layout->addWidget(no_recents);
   }

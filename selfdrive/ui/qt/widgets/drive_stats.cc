@@ -41,9 +41,9 @@ DriveStats::DriveStats(QWidget* parent) : QFrame(parent) {
     main_layout->addLayout(grid_layout);
   };
 
-  add_stats_layouts("ALL TIME", all_);
+  add_stats_layouts("所有駕駛記錄", all_);
   main_layout->addStretch();
-  add_stats_layouts("PAST WEEK", week_);
+  add_stats_layouts("上周駕駛記錄", week_);
 
   if (auto dongleId = getDongleId()) {
     QString url = CommaApi::BASE_URL + "/v1.1/devices/" + *dongleId + "/stats";

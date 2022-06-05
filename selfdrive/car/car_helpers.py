@@ -122,7 +122,7 @@ def fingerprint(logcan, sendcan):
   finger = gen_empty_fingerprint()
   candidate_cars = {i: all_legacy_fingerprint_cars() for i in [0, 1]}  # attempt fingerprint on both bus 0 and 1
   frame = 0
-  frame_fingerprint = 10  # 0.1s
+  frame_fingerprint = 25  # 0.25s
   car_fingerprint = None
   done = False
 
@@ -176,6 +176,11 @@ def fingerprint(logcan, sendcan):
 
 def get_car(logcan, sendcan):
   candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(logcan, sendcan)
+
+  if Params().get("CarModel", encoding="utf8") is not None:
+    car_name = Params().get("CarModel", encoding="utf8")
+    car_name = car_name.rstrip('\n')
+    candidate = car_name
 
   if candidate is None:
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)

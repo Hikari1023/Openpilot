@@ -7,9 +7,11 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QWidget>
+#include <QStackedLayout>
 
 
 #include "selfdrive/ui/qt/widgets/controls.h"
+#include "selfdrive/ui/qt/widgets/timpilot.h"
 
 // ********** settings window + top-level panels **********
 class SettingsWindow : public QFrame {
@@ -86,4 +88,18 @@ private:
   void showEvent(QShowEvent *event) override;
   QString getIPAddress();
   LabelControl *ipaddress;
+};
+
+class TimpilotPanel : public QWidget {
+  Q_OBJECT
+
+private:
+  QStackedLayout* main_layout = nullptr;
+  QWidget* home = nullptr;
+  ForceCarRecognition* setCar = nullptr;
+
+  QWidget* home_widget;
+
+public:
+  explicit TimpilotPanel(QWidget *parent = nullptr);
 };

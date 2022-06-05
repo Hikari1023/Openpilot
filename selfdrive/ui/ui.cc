@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <cmath>
-
+#include <string>
 #include <QtConcurrent>
 
 #include "common/transformations/orientation.hpp"
@@ -98,7 +98,7 @@ static void update_model(UIState *s, const cereal::ModelDataV2::Reader &model) {
     max_distance = std::clamp((float)(lead_d - fmin(lead_d * 0.35, 10.)), 0.0f, max_distance);
   }
   max_idx = get_path_length_idx(model_position, max_distance);
-  update_line_data(s, model_position, 0.5, 1.22, &scene.track_vertices, max_idx);
+  update_line_data(s, model_position, scene.end_to_end ? 0.9 : 0.5, 1.22, &scene.track_vertices, max_idx);
 }
 
 static void update_sockets(UIState *s) {
@@ -192,6 +192,7 @@ static void update_state(UIState *s) {
 
 void ui_update_params(UIState *s) {
   s->scene.is_metric = Params().getBool("IsMetric");
+  s->scene.onroadScreenOff = Params().getBool("OnroadScreenOff");
 }
 
 void UIState::updateStatus() {
@@ -227,7 +228,7 @@ UIState::UIState(QObject *parent) : QObject(parent) {
   sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "roadCameraState",
     "pandaStates", "carParams", "driverMonitoringState", "sensorEvents", "carState", "liveLocationKalman",
-    "wideRoadCameraState",
+    "wideRoadCameraState", "longitudinalPlan",
   });
 
   Params params;
@@ -298,6 +299,8 @@ void Device::updateBrightness(const UIState &s) {
 
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
+    brightness = 0;
+  } else if (s.scene.started && interactive_timeout == 0 && s.scene.onroadScreenOff) {
     brightness = 0;
   }
 

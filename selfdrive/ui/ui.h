@@ -87,6 +87,14 @@ const QColor bg_colors [] = {
   [STATUS_ALERT] = QColor(0xC9, 0x22, 0x31, 0xf1),
 };
 
+const QColor tcs_colors [] = {
+  [int(cereal::LongitudinalPlan::VisionTurnControllerState::DISABLED)] =  QColor(0x0, 0x0, 0x0, 0xff),
+  [int(cereal::LongitudinalPlan::VisionTurnControllerState::ENTERING)] = QColor(0xC9, 0x22, 0x31, 0xf1),
+  [int(cereal::LongitudinalPlan::VisionTurnControllerState::TURNING)] = QColor(0xDA, 0x6F, 0x25, 0xf1),
+  [int(cereal::LongitudinalPlan::VisionTurnControllerState::LEAVING)
+  ] = QColor(0x17, 0x86, 0x44, 0xf1),
+};
+
 typedef struct {
   QPointF v[TRAJECTORY_SIZE * 2];
   int cnt;
@@ -94,7 +102,12 @@ typedef struct {
 
 typedef struct UIScene {
   mat3 view_from_calib;
+  bool onroadScreenOff;
   cereal::PandaState::PandaType pandaType;
+  bool read_params = false;
+  int osoTimer, brightness, awake;
+  bool touched2 = false;
+  cereal::ControlsState::Reader controls_state;
 
   // modelV2
   float lane_line_probs[4];
@@ -169,6 +182,8 @@ private:
   int last_brightness = 0;
   FirstOrderFilter brightness_filter;
   QFuture<void> brightness_future;
+
+  int sleep_time = -1;
 
   void updateBrightness(const UIState &s);
   void updateWakefulness(const UIState &s);
