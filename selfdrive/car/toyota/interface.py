@@ -57,11 +57,11 @@ class CarInterface(CarInterfaceBase):
     elif candidate == CAR.PRIUS_V and not LQR:
       stop_and_go = True
       ret.wheelbase = 2.78
-      ret.steerRatio = 16.8
+      ret.steerRatio = 17.2
       tire_stiffness_factor = 0.5533
       ret.mass = 3340. * CV.LB_TO_KG + STD_CARGO_KG
       ret.maxLateralAccel = 2.1
-      set_lat_tune(ret.lateralTuning, LatTunes.TORQUE, MAX_LAT_ACCEL=ret.maxLateralAccel, FRICTION=0.035)
+      set_lat_tune(ret.lateralTuning, LatTunes.TORQUE, MAX_LAT_ACCEL=ret.maxLateralAccel, FRICTION=0.038)
       ret.wheelSpeedFactor = 1.09
 
     elif candidate == CAR.PRIUS_V and LQR:
