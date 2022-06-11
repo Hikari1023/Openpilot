@@ -532,6 +532,12 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_metric.png",
                                   this));
 
+  toggles.append(new ParamControl("topsng",
+                                  "Stop And Go",
+                                  "啟用Stop & Go 功能，讓車輛跟車到停並進入auto hold。",
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
   toggles.append(new ParamControl("TurnVisionControl",
                                   "彎道減速",
                                   "使用視覺路徑預測來估算適當的速度，可自動降速以順利通過前方的轉彎。",
