@@ -52,11 +52,6 @@ bool toyota_alt_brake = false;
 bool toyota_stock_longitudinal = false;
 int toyota_dbc_eps_torque_factor = 100;   // conversion factor for STEER_TORQUE_EPS in %: see dbc file
 
-// steering faults occur when the angle rate is above a certain threshold for too long,
-// allow setting STEER_REQUEST bit to 0 with a non-zero desired torque when expected
-const uint8_t TOYOTA_MAX_STEER_RATE_FRAMES = 19U;
-uint8_t toyota_steer_req_matches;  // counter for steer request bit matching non-zero torque
-
 static uint8_t toyota_compute_checksum(CANPacket_t *to_push) {
   int addr = GET_ADDR(to_push);
   int len = GET_LEN(to_push);
@@ -153,10 +148,6 @@ static int toyota_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
   int addr = GET_ADDR(to_send);
   int bus = GET_BUS(to_send);
 
-  if (!controls_allowed) {
-    tx = 0;
-  }
-
   if (!msg_allowed(to_send, TOYOTA_TX_MSGS, sizeof(TOYOTA_TX_MSGS)/sizeof(TOYOTA_TX_MSGS[0]))) {
     tx = 0;
   }
@@ -193,8 +184,6 @@ static int toyota_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
 
       bool violation = max_limit_check(desired_accel, TOYOTA_MAX_ACCEL, TOYOTA_MIN_ACCEL);
 
-      tx = 1;
-
       if (violation) {
         tx = 0;
       }
@@ -227,8 +216,8 @@ static int toyota_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
     // STEER: safety check on bytes 2-3
     if (addr == 0x2E4) {
       int desired_torque = (GET_BYTE(to_send, 1) << 8) | GET_BYTE(to_send, 2);
-      bool steer_req = GET_BIT(to_send, 0U) != 0U;
       desired_torque = to_signed(desired_torque, 16);
+      bool steer_req = GET_BIT(to_send, 0U) != 0U;
       bool violation = 0;
 
       uint32_t ts = microsecond_timer_get();
@@ -256,24 +245,8 @@ static int toyota_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
         }
       }
 
-      // on a steer_req bit mismatch, increment counter and reset match count
-      bool steer_req_mismatch = (desired_torque != 0) && !steer_req;
-      if (steer_req_mismatch) {
-        // disallow torque cut if not enough recent matching steer_req messages
-        if (toyota_steer_req_matches < (TOYOTA_MAX_STEER_RATE_FRAMES - 1U)) {
-          violation = 1;
-        }
-      } else {
-        toyota_steer_req_matches = MIN(toyota_steer_req_matches + 1U, 255U);
-      }
-
-      // reset match count if controls not allowed or steer_req mismatch
-      if (!controls_allowed || steer_req_mismatch) {
-        toyota_steer_req_matches = 0U;
-      }
-
-      // no torque if controls is not allowed
-      if (!controls_allowed && (desired_torque != 0)) {
+      // no torque if controls is not allowed or mismatch with STEER_REQUEST bit
+      if ((!controls_allowed || !steer_req) && (desired_torque != 0)) {
         violation = 1;
       }
 
@@ -302,7 +275,6 @@ static const addr_checks* toyota_init(uint16_t param) {
   controls_allowed = 0;
   relay_malfunction_reset();
   gas_interceptor_detected = 0;
-  toyota_steer_req_matches = 0U;
   toyota_alt_brake = GET_FLAG(param, TOYOTA_PARAM_ALT_BRAKE);
   toyota_stock_longitudinal = GET_FLAG(param, TOYOTA_PARAM_STOCK_LONGITUDINAL);
   toyota_dbc_eps_torque_factor = param & TOYOTA_EPS_FACTOR;
@@ -324,31 +296,9 @@ static int toyota_fwd_hook(int bus_num, CANPacket_t *to_fwd) {
     int is_lkas_msg = ((addr == 0x2E4) || (addr == 0x412) || (addr == 0x191));
     // in TSS2 the camera does ACC as well, so filter 0x343
     int is_acc_msg = (addr == 0x343);
-    // detect if car has LTA message
-    if (addr == 0x191) {
-      tss2 = 1;
-    }
-    // keep factory Lane Departure Warning when openpilot is not engaged
-    // this also eliminates the dash error if the comma device was to reboot
-    // when the car is running by keep the messages flowing uninterrupted
-    // THIS IS A SAFETY VIOLATION, DO NOT ENABLE UPLOADER OR YOUR DEVICE 
-    // WILL BE BANNED BY COMMA, THIS FORK'S MAINTAINERS ARE NOT RESPONSIBLE
-    // FOR ANY OF YOUR LOSSES
-    if (tss2 && controls_allowed) { // block all messages on TSS 2.0 when controls are allowed
     int block_msg = is_lkas_msg || (is_acc_msg && !toyota_stock_longitudinal);
-      if (!block_msg) {
-        bus_fwd = 0;
-      }
-    } else if (tss2 && !controls_allowed) { // don't block LDA message on TSS 2.0 when not engaged
-      int block_msg = is_acc_msg;
-      if (!block_msg) {
-        bus_fwd = 0;
-      }
-    } else {  // only block on TSS-P cars when openpilot is not in control
-      int block_msg = is_lkas_msg || is_acc_msg;
-      if (!block_msg || !controls_allowed) {
-        bus_fwd = 0;
-      }
+    if (!block_msg) {
+      bus_fwd = 0;
     }
   }
 
