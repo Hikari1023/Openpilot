@@ -271,4 +271,7 @@ class CarState(CarStateBase):
         ("ACC_HUD", 1),
       ]
 
+      # KRKeegan - Add support for toyota distance button
+      signals.append(("DISTANCE", "ACC_CONTROL", 0))
+
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)
