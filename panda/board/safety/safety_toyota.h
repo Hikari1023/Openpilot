@@ -38,7 +38,6 @@ AddrCheckStruct toyota_addr_checks[] = {
 };
 #define TOYOTA_ADDR_CHECKS_LEN (sizeof(toyota_addr_checks) / sizeof(toyota_addr_checks[0]))
 addr_checks toyota_rx_checks = {toyota_addr_checks, TOYOTA_ADDR_CHECKS_LEN};
-int tss2 = 0;
 
 // safety param flags
 // first byte is for eps factor, second is for flags
@@ -217,7 +216,6 @@ static int toyota_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
     if (addr == 0x2E4) {
       int desired_torque = (GET_BYTE(to_send, 1) << 8) | GET_BYTE(to_send, 2);
       desired_torque = to_signed(desired_torque, 16);
-      bool steer_req = GET_BIT(to_send, 0U) != 0U;
       bool violation = 0;
 
       uint32_t ts = microsecond_timer_get();
@@ -245,8 +243,8 @@ static int toyota_tx_hook(CANPacket_t *to_send, bool longitudinal_allowed) {
         }
       }
 
-      // no torque if controls is not allowed or mismatch with STEER_REQUEST bit
-      if ((!controls_allowed || !steer_req) && (desired_torque != 0)) {
+      // no torque if controls is not allowed
+      if (!controls_allowed && (desired_torque != 0)) {
         violation = 1;
       }
 
