@@ -110,6 +110,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     cruiseMismatch @106;
     lkasDisabled @107;
     canBusMissing @111;
+    controlsdLagging @112;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
@@ -177,6 +178,7 @@ struct CarState {
   stockAeb @30 :Bool;
   stockFcw @31 :Bool;
   espDisabled @32 :Bool;
+  accFaulted @42 :Bool;
 
   # cruise state
   cruiseState @10 :CruiseState;
@@ -478,7 +480,9 @@ struct CarParams {
 
   struct SafetyConfig {
     safetyModel @0 :SafetyModel;
-    safetyParam @1 :Int16;
+    safetyParam @3 :UInt16;
+    safetyParamDEPRECATED @1 :Int16;
+    safetyParam2DEPRECATED @2 :UInt32;
   }
 
   struct LateralParams {

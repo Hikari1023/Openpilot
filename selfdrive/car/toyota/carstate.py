@@ -219,6 +219,9 @@ class CarState(CarStateBase):
       checks.append(("BSM", 1))
 
     # KRKeegan - Add support for toyota distance button
+    signals.append(("DISTANCE_LINES", "PCM_CRUISE_SM", 0))
+    checks.append(("PCM_CRUISE_SM", 1))
+
     if CP.smartDsu:
       signals.append(("FD_BUTTON", "SDSU", 0))
       checks.append(("SDSU", 33))
@@ -243,6 +246,6 @@ class CarState(CarStateBase):
       checks.append(("ACC_CONTROL", 33))
 
       # KRKeegan - Add support for toyota distance button
-      signals.append(("DISTANCE", "ACC_CONTROL", 0))
+      signals.append(("DISTANCE", "ACC_CONTROL"))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)

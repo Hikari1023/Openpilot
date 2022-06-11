@@ -391,7 +391,7 @@ struct PandaState @0xa7649e2575e4591e {
   pandaType @10 :PandaType;
   ignitionCan @13 :Bool;
   safetyModel @14 :Car.CarParams.SafetyModel;
-  safetyParam @20 :Int16;
+  safetyParam @27 :UInt16;
   alternativeExperience @23 :Int16;
   faultStatus @15 :FaultStatus;
   powerSaveEnabled @16 :Bool;
@@ -458,6 +458,8 @@ struct PandaState @0xa7649e2575e4591e {
   hasGpsDEPRECATED @6 :Bool;
   fanSpeedRpmDEPRECATED @11 :UInt16;
   usbPowerModeDEPRECATED @12 :PeripheralState.UsbPowerMode;
+  safetyParamDEPRECATED @20 :Int16;
+  safetyParam2DEPRECATED @26 :UInt32;
 }
 
 struct PeripheralState {
@@ -563,6 +565,8 @@ struct ControlsState @0x97ff69c53601abf1 {
   ufAccelCmd @33 :Float32;
   aTarget @35 :Float32;
   curvature @37 :Float32;  # path curvature from vehicle model
+  desiredCurvature @61 :Float32;  # lag adjusted curvatures used by lateral controllers
+  desiredCurvatureRate @62 :Float32;
   forceDecel @51 :Bool;
 
   # UI alerts
@@ -647,6 +651,8 @@ struct ControlsState @0x97ff69c53601abf1 {
     f @5 :Float32;
     output @6 :Float32;
     saturated @7 :Bool;
+    actualLateralAccel @9 :Float32;
+    desiredLateralAccel @10 :Float32;
    }
 
   struct LateralLQRState {
