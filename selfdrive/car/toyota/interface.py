@@ -208,7 +208,7 @@ class CarInterface(CarInterfaceBase):
       ret.steerRatio = 13.4   # True steerRatio from older prius
       tire_stiffness_factor = 0.6371   # hand-tune
       ret.mass = 3115. * CV.LB_TO_KG + STD_CARGO_KG
-      set_lat_tune(ret.lateralTuning, LatTunes.PID_N)
+      #set_lat_tune(ret.lateralTuning, LatTunes.PID_N)
 
     elif candidate == CAR.MIRAI:
       stop_and_go = True
