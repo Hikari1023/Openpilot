@@ -207,8 +207,9 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.70002  # from toyota online sepc.
       ret.steerRatio = 13.4   # True steerRatio from older prius
       tire_stiffness_factor = 0.6371   # hand-tune
-      ret.mass = 3115. * CV.LB_TO_KG + STD_CARGO_KG
+      ret.mass = 3135. * CV.LB_TO_KG + STD_CARGO_KG
       #set_lat_tune(ret.lateralTuning, LatTunes.PID_N)
+      ret.steerActuatorDelay = 0.32
 
     elif candidate == CAR.MIRAI:
       stop_and_go = True
